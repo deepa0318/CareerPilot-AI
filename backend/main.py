@@ -23,10 +23,13 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://career-pilot-ai-ten-omega.vercel.app",
-    ],
+    "http://localhost:5173",
+    "http://localhost:3000",
+
+    "https://career-pilot-ai-ten-omega.vercel.app",
+    "https://career-pilot-ai-dupvw7a3l-deepa0318s-projects.vercel.app",
+    "https://career-pilot-ai-git-main-deepa0318s-projects.vercel.app",
+]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
