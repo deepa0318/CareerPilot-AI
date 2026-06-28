@@ -12,6 +12,7 @@ from models import models
 from routers import auth, resume, interview, skills, profile
 from routers import chatbot as chat
 
+# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -20,26 +21,45 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# -----------------------------
+# CORS Configuration
+# -----------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:5173",
-    "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:3000",
 
-    "https://career-pilot-ai-ten-omega.vercel.app",
-    "https://career-pilot-ai-dupvw7a3l-deepa0318s-projects.vercel.app",
-    "https://career-pilot-ai-git-main-deepa0318s-projects.vercel.app",
-],
+        # Production Vercel URL
+        "https://career-pilot-ai-ten-omega.vercel.app",
+
+        # Current Preview URL
+        "https://career-pilot-dupvw7a3l-deepa0318s-projects.vercel.app",
+    ],
+
+    # Allow every Vercel preview deployment
+    allow_origin_regex=r"https://career-pilot.*\.vercel\.app",
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# -----------------------------
+# Upload folders
+# -----------------------------
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("uploads/photos", exist_ok=True)
 
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
+)
 
+# -----------------------------
+# Routers
+# -----------------------------
 app.include_router(auth.router)
 app.include_router(resume.router)
 app.include_router(interview.router)
@@ -47,7 +67,9 @@ app.include_router(skills.router)
 app.include_router(chat.router)
 app.include_router(profile.router)
 
-
+# -----------------------------
+# Root
+# -----------------------------
 @app.get("/")
 def root():
     return {
@@ -55,9 +77,20 @@ def root():
         "version": "1.0.0"
     }
 
-
+# -----------------------------
+# Health Check
+# -----------------------------
 @app.get("/health")
 def health():
     return {
         "status": "healthy"
+    }
+
+# -----------------------------
+# Test Route
+# -----------------------------
+@app.get("/cors-test")
+def cors_test():
+    return {
+        "message": "CORS is working"
     }
