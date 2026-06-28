@@ -12,7 +12,7 @@ def get_gemini_model(api_key=None):
 
     genai.configure(api_key=key)
 
-    return genai.GenerativeModel("gemini-flash-latest")
+    return genai.GenerativeModel("gemini-2.0-flash")
 
 
 async def generate_content(prompt, api_key=None):
