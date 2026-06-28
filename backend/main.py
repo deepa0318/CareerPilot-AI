@@ -29,7 +29,7 @@ app.add_middleware(
     "https://career-pilot-ai-ten-omega.vercel.app",
     "https://career-pilot-ai-dupvw7a3l-deepa0318s-projects.vercel.app",
     "https://career-pilot-ai-git-main-deepa0318s-projects.vercel.app",
-]
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
