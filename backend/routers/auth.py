@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
 import os
 
+from fastapi.security import OAuth2PasswordRequestForm
 from database.database import get_db
 from models.models import User, Settings
 
@@ -17,7 +18,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 class UserRegister(BaseModel):
@@ -135,3 +136,23 @@ def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db
     if not user:
         raise HTTPException(status_code=404, detail="Email not found")
     return {"message": "Password reset link sent to your email"}
+
+@router.post("/token")
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.email == form_data.username).first()
+
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    token = create_access_token({"sub": str(user.id)})
+
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
